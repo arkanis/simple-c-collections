@@ -1,0 +1,12 @@
+GCC_FLAGS = -std=c99 -Werror -Wall -Wextra -pedantic
+GCC_DEBUG_FLAGS = -g
+GCC_OPTIMIZED_FLAGS = -O3
+# Use a simply expanded variable to avoid endless recursion, see
+# http://www.gnu.org/savannah-checkouts/gnu/make/manual/html_node/Flavors.html
+GCC_FLAGS := $(GCC_FLAGS) $(GCC_DEBUG_FLAGS)
+#GCC_FLAGS := $(GCC_FLAGS) $(GCC_OPTIMIZED_FLAGS)
+
+# clean target for all directories, ensures that the ignore files
+# are properly maintained.
+clean:
+	rm -fr `tr '\n' ' ' < .gitignore`
