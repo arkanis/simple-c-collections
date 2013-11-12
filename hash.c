@@ -296,6 +296,7 @@ static void unified_hash_resize(unified_hash_p hash, size_t new_capacity){
 	new_hash.capacity = new_capacity;
 	new_hash.length = 0;
 	new_hash.value_size = hash->value_size;
+	new_hash.key_type = hash->key_type;
 	new_hash.slots = calloc(new_hash.capacity, slot_size(hash));
 	
 	// Failed to allocate memory for new hash map, leave the original untouched

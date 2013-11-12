@@ -268,6 +268,30 @@ void test_dict(){
 	dict_destroy(d);
 }
 
+/**
+ * Bug test: While resizing a dict was reset to a hash (int key instead of string key). This
+ * caused the string key to be a NULL pointer.
+ */
+void test_dict_resize(){
+	dict_p d = dict_with(1, int);
+	
+	dict_put(d, "foo", int, 1572);
+	check_int(d->length, 1);
+	
+	// Have to use iteration to get invalid string key pointer. With dict_get we would map to
+	// the same invalid hash and everything would work more or less.
+	for(dict_elem_t e = dict_start(d); e; e = dict_next(d, e)) {
+		const char* key = dict_key(e);
+		const int value = dict_value(e, int);
+		
+		check_not_null(key);
+		check_str(key, "foo");
+		check_int(value, 1572);
+	}
+	
+	dict_destroy(d);
+}
+
 int main(){
 	run(test_alloc);
 	run(test_put_and_get_new_elem);
@@ -281,5 +305,6 @@ int main(){
 	run(test_automatic_prime_resize);
 	run(test_snap_to_prime);
 	run(test_dict);
+	run(test_dict_resize);
 	return show_report();
 }
