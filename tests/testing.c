@@ -82,6 +82,7 @@ bool check_func(bool expr, const char *file, const int line, const char *func_na
 		
 		// Allocate a new report item for the message and insert it at the end of the linked list
 		report_item_p item = malloc(sizeof(report_item_t));
+		memset(item, 0, sizeof(report_item_t));
 		if (report_items == NULL) {
 			report_items = item;
 		} else {
