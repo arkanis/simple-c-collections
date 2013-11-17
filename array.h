@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdbool.h>
 
 typedef struct {
 	size_t length, capacity;
@@ -18,6 +19,10 @@ typedef struct {
 array_p array_new(size_t length, size_t element_size);
 void    array_destroy(array_p array);
 void*   array_resize(array_p array, size_t new_length);
+
+// Removes empty elements from an array if more than `empty_elements_threshold` are empty.
+typedef bool (*array_is_elem_empty_t)(array_p array, size_t index);
+void    array_compact_threshold(array_p array, size_t empty_elements_threshold, array_is_elem_empty_t func);
 
 
 /*

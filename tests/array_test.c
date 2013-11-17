@@ -74,11 +74,42 @@ void test_amortized_doubling(){
 	array_destroy(a);
 }
 
+
+bool compact_threshold_elem_is_empty(array_p array, size_t index){
+	return array_data(array, int)[index] == 0;
+}
+
+void test_array_compact_threshold(){
+	array_p a = array_with(10, int);
+	array_data(a, int)[0] = 1;
+	array_data(a, int)[1] = 1;
+	array_data(a, int)[2] = 0;
+	array_data(a, int)[3] = 1;
+	array_data(a, int)[4] = 1;
+	array_data(a, int)[5] = 0;
+	array_data(a, int)[6] = 1;
+	array_data(a, int)[7] = 1;
+	array_data(a, int)[8] = 0;
+	array_data(a, int)[9] = 1;
+	check_int(a->length, 10);
+	
+	array_compact_threshold(a, 5, compact_threshold_elem_is_empty);
+	check_int(a->length, 10);
+	
+	array_compact_threshold(a, 2, compact_threshold_elem_is_empty);
+	check_int(a->length, 7);
+	for(size_t i = 0; i < a->length; i++)
+		check_int( array_data(a, int)[i], 1 );
+	
+	array_destroy(a);
+}
+
 int main(){
 	run(test_alloc);
 	run(test_access);
 	run(test_append);
 	run(test_array_of);
 	run(test_amortized_doubling);
+	run(test_array_compact_threshold);
 	return show_report();
 }
