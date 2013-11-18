@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <sys/types.h>
+
 
 typedef struct {
 	size_t length, capacity;
@@ -14,23 +16,29 @@ typedef struct {
 #define array_of(type)            array_new(0, sizeof(type))
 
 #define array_data(array, type)           ((type*)array->data)
+#define array_elem(array, type, index)    (array_data(array, type)[index])
 #define array_append(array, type, value)  (*((type*)array_resize(array, array->length + 1)) = (value))
 
 array_p array_new(size_t length, size_t element_size);
 void    array_destroy(array_p array);
 void*   array_resize(array_p array, size_t new_length);
 
-// Removes empty elements from an array if more than `empty_elements_threshold` are empty.
-typedef bool (*array_is_elem_empty_t)(array_p array, size_t index);
-void    array_compact_threshold(array_p array, size_t empty_elements_threshold, array_is_elem_empty_t func);
+typedef bool (*array_elem_check_t)(array_p array, size_t index);
 
+// Removes empty elements from an array if more than `empty_elements_threshold` are empty.
+void    array_compact_threshold(array_p array, size_t empty_elements_threshold, array_elem_check_t is_empty_function);
+
+// Searches for the first occurence of value in the array. Returns -1 if no matching element was found.
+ssize_t array_find(array_p array, array_elem_check_t check_function);
+
+// Removes one element from the array
+void    array_remove(array_p array, size_t index);
 
 /*
 
 Further ideas:
 
-// Searches for the first occurence of value in the array
-size_t array_find(array, value)
+
 
 // searches in region of the array. length = 0 means all remaining elements after start.
 // a negative start value means an index from the end (-1 is the last element)
@@ -45,7 +53,7 @@ array_p array_slice(array, start, length);
 array_p array_copy_slice(array, start, length);
 
 
-void array_remove(array, index);
+
 void array_remove_slice(array, start, length);
 
 */

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "testing.h"
 #include "../array.h"
 
@@ -104,6 +105,53 @@ void test_array_compact_threshold(){
 	array_destroy(a);
 }
 
+bool array_find_comp1(array_p array, size_t index){ return array_elem(array, int, index) == 19; }
+bool array_find_comp2(array_p array, size_t index){ return array_elem(array, int, index) == 26; }
+bool array_find_comp3(array_p array, size_t index){ return array_elem(array, int, index) == 8;  }
+
+void test_array_find(){
+	array_p a = array_with(4, int);
+	array_data(a, int)[0] = 7;
+	array_data(a, int)[1] = 584;
+	array_data(a, int)[2] = 19;
+	array_data(a, int)[3] = 26;
+	
+	check_int(array_find(a, array_find_comp1), 2);
+	check_int(array_find(a, array_find_comp2), 3);
+	check_int(array_find(a, array_find_comp3), -1);
+	
+	array_destroy(a);
+}
+
+void test_array_remove(){
+	array_p a = array_with(4, uint32_t);
+	array_data(a, uint32_t)[0] = 0x11223344;
+	array_data(a, uint32_t)[1] = 0x55667788;
+	array_data(a, uint32_t)[2] = 0x99aabbcc;
+	array_data(a, uint32_t)[3] = 0xddeeff00;
+	check_int(a->length, 4);
+	
+	// Removing something in the middle
+	array_remove(a, 1);
+	check_int(a->length, 3);
+	check_int(array_elem(a, uint32_t, 0), 0x11223344);
+	check_int(array_elem(a, uint32_t, 1), 0x99aabbcc);
+	check_int(array_elem(a, uint32_t, 2), 0xddeeff00);
+	
+	// Removing something at the end
+	array_remove(a, 2);
+	check_int(a->length, 2);
+	check_int(array_elem(a, uint32_t, 0), 0x11223344);
+	check_int(array_elem(a, uint32_t, 1), 0x99aabbcc);
+	
+	// Removing something at the beginning
+	array_remove(a, 0);
+	check_int(a->length, 1);
+	check_int(array_elem(a, uint32_t, 1), 0x99aabbcc);
+	
+	array_destroy(a);
+}
+
 int main(){
 	run(test_alloc);
 	run(test_access);
@@ -111,5 +159,7 @@ int main(){
 	run(test_array_of);
 	run(test_amortized_doubling);
 	run(test_array_compact_threshold);
+	run(test_array_find);
+	run(test_array_remove);
 	return show_report();
 }

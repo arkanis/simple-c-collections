@@ -62,11 +62,11 @@ void* array_resize(array_p array, size_t new_length){
 	return (old_length < new_length) ? (char*)array->data + (old_length * array->element_size) : NULL;
 }
 
-void array_compact_threshold(array_p array, size_t empty_elements_threshold, array_is_elem_empty_t is_elem_empty_func){
+void array_compact_threshold(array_p array, size_t empty_elements_threshold, array_elem_check_t is_empty_function){
 	// First check if enough elements are empty
 	size_t empty_elements = 0;
 	for(size_t index = 0; index < array->length; index++) {
-		if ( is_elem_empty_func(array, index) ) {
+		if ( is_empty_function(array, index) ) {
 			empty_elements++;
 			
 			if (empty_elements >= empty_elements_threshold)
@@ -80,7 +80,7 @@ void array_compact_threshold(array_p array, size_t empty_elements_threshold, arr
 	// Then overwrite empty elements with the following filled ones
 	size_t compacted_index = 0;
 	for(size_t index = 0; index < array->length; index++) {
-		if ( !is_elem_empty_func(array, index) ) {
+		if ( !is_empty_function(array, index) ) {
 			if (index != compacted_index)
 				memcpy((char*)array->data + compacted_index * array->element_size, (char*)array->data + index * array->element_size, array->element_size);
 			
@@ -90,4 +90,22 @@ void array_compact_threshold(array_p array, size_t empty_elements_threshold, arr
 	
 	// And finally chop off the empty end of the array
 	array_resize(array, compacted_index);
+}
+
+ssize_t array_find(array_p array, array_elem_check_t check_function){
+	for(size_t index = 0; index < array->length; index++) {
+		if ( check_function(array, index) )
+			return index;
+	}
+	
+	return -1;
+}
+
+void array_remove(array_p array, size_t index){
+	if (index >= array->length)
+		return;
+	
+	char* elem_start_ptr = (char*)array->data + index * array->element_size;
+	memmove(elem_start_ptr, elem_start_ptr + array->element_size, (array->length - index - 1) * array->element_size);
+	array_resize(array, array->length - 1);
 }
