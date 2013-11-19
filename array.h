@@ -23,16 +23,18 @@ array_p array_new(size_t length, size_t element_size);
 void    array_destroy(array_p array);
 void*   array_resize(array_p array, size_t new_length);
 
-typedef bool (*array_elem_check_t)(array_p array, size_t index);
+typedef bool (*array_elem_func_t)(array_p array, size_t index);
 
 // Removes empty elements from an array if more than `empty_elements_threshold` are empty.
-void    array_compact_threshold(array_p array, size_t empty_elements_threshold, array_elem_check_t is_empty_function);
+void    array_compact_threshold(array_p array, size_t empty_elements_threshold, array_elem_func_t is_empty_function);
 
 // Searches for the first occurence of value in the array. Returns -1 if no matching element was found.
-ssize_t array_find(array_p array, array_elem_check_t check_function);
+ssize_t array_find(array_p array, array_elem_func_t check_function);
 
 // Removes one element from the array
 void    array_remove(array_p array, size_t index);
+
+void    array_remove_func(array_p array, array_elem_func_t func);
 
 // This stuff requires the statement as expression GCC extention. Therefore only compile
 // it when not in strict C mode.
@@ -61,6 +63,23 @@ void    array_remove(array_p array, size_t index);
 	}                                                 \
 	index;                                            \
 })
+
+#define array_remove_val(array, type, value)  ({         \
+	bool elem_func(array_p array, size_t index){         \
+		return array_elem(array, type, index) == value;  \
+	}                                                    \
+	array_remove_func(a, elem_func);                     \
+})
+
+// In the expression the current element is available as the variable "x"
+#define array_remove_expr(array, type, expression)  ({    \
+	bool elem_func(array_p array, size_t index){         \
+		type x = array_elem(array, type, index);         \
+		return (expression);                             \
+	}                                                    \
+	array_remove_func(a, elem_func);                     \
+})
+
 
 #endif
 

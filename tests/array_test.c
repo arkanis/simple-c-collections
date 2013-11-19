@@ -152,6 +152,25 @@ void test_array_remove(){
 	array_destroy(a);
 }
 
+bool array_remove_func_is_null(array_p array, size_t index){ return array_elem(array, uint32_t, index) == 0; }
+
+void test_array_remove_func(){
+	array_p a = array_with(5, uint32_t);
+	array_data(a, uint32_t)[0] = 0;
+	array_data(a, uint32_t)[1] = 0x11223344;
+	array_data(a, uint32_t)[2] = 0;
+	array_data(a, uint32_t)[3] = 0x99aabbcc;
+	array_data(a, uint32_t)[4] = 0;
+	check_int(a->length, 5);
+	
+	array_remove_func(a, array_remove_func_is_null);
+	check_int(a->length, 2);
+	check_int(array_elem(a, uint32_t, 0), 0x11223344);
+	check_int(array_elem(a, uint32_t, 1), 0x99aabbcc);
+	
+	array_destroy(a);
+}
+
 // Only test the features requireing GNU extention when we're compiling in GNU C mode
 #ifndef __STRICT_ANSI__
 
@@ -183,6 +202,48 @@ void test_array_find_expr(){
 	array_destroy(a);
 }
 
+void test_array_remove_val(){
+	array_p a = array_with(4, int);
+	array_data(a, int)[0] = 7;
+	array_data(a, int)[1] = 584;
+	array_data(a, int)[2] = 19;
+	array_data(a, int)[3] = 26;
+	
+	array_remove_val(a, int, 19);
+	check_int(a->length, 3);
+	check_int(array_elem(a, uint32_t, 0), 7);
+	check_int(array_elem(a, uint32_t, 1), 584);
+	check_int(array_elem(a, uint32_t, 2), 26);
+
+	array_remove_val(a, int, 7);
+	array_remove_val(a, int, 26);
+	check_int(a->length, 1);
+	check_int(array_elem(a, uint32_t, 0), 584);
+	
+	array_destroy(a);
+}
+
+void test_array_remove_expr(){
+	array_p a = array_with(4, int);
+	array_data(a, int)[0] = 7;
+	array_data(a, int)[1] = 584;
+	array_data(a, int)[2] = 19;
+	array_data(a, int)[3] = 26;
+	
+	array_remove_expr(a, int, x % 2 == 0);
+	check_int(a->length, 2);
+	check_int(array_elem(a, uint32_t, 0), 7);
+	check_int(array_elem(a, uint32_t, 1), 19);
+	
+	array_remove_expr(a, int, x < 10);
+	check_int(a->length, 1);
+	check_int(array_elem(a, uint32_t, 0), 19);
+	
+	array_destroy(a);
+}
+
+
+
 #endif
 
 int main(){
@@ -194,10 +255,13 @@ int main(){
 	run(test_array_compact_threshold);
 	run(test_array_find);
 	run(test_array_remove);
+	run(test_array_remove_func);
 	
 #	ifndef __STRICT_ANSI__
 	run(test_array_find_val);
 	run(test_array_find_expr);
+	run(test_array_remove_val);
+	run(test_array_remove_expr);
 #	endif
 	
 	return show_report();

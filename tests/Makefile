@@ -1,8 +1,8 @@
 include ../Makeparams
 
-all: array_test array_gnu_test hash_test
+all: array_test gnu_array_test hash_test
 	./array_test
-	./array_gnu_test
+	./gnu_array_test
 	./hash_test
 
 testing.o: testing.h testing.c
@@ -12,9 +12,9 @@ array_test: array_test.c testing.o
 	cd ..; make array.o
 	gcc $(GCC_FLAGS) array_test.c ../array.o testing.o -o array_test
 
-array_gnu_test: array_test.c testing.o
+gnu_array_test: array_test.c testing.o
 	cd ..; make array.o
-	gcc $(GCC_GNU_FLAGS) array_test.c ../array.o testing.o -o array_gnu_test
+	gcc $(GCC_GNU_FLAGS) array_test.c ../array.o testing.o -o gnu_array_test
 
 hash_test: hash_test.c testing.o
 	cd ..; make hash.o

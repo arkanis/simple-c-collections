@@ -62,20 +62,23 @@ void* array_resize(array_p array, size_t new_length){
 	return (old_length < new_length) ? (char*)array->data + (old_length * array->element_size) : NULL;
 }
 
-void array_compact_threshold(array_p array, size_t empty_elements_threshold, array_elem_check_t is_empty_function){
-	// First check if enough elements are empty
-	size_t empty_elements = 0;
-	for(size_t index = 0; index < array->length; index++) {
-		if ( is_empty_function(array, index) ) {
-			empty_elements++;
-			
-			if (empty_elements >= empty_elements_threshold)
-				break;
+void array_compact_threshold(array_p array, size_t empty_elements_threshold, array_elem_func_t is_empty_function){
+	// First check if enough elements are empty. If the threshold is 0 or 1 we don't need this because
+	// we have to compact each found element anyway.
+	if (empty_elements_threshold > 1) {
+		size_t empty_elements = 0;
+		for(size_t index = 0; index < array->length; index++) {
+			if ( is_empty_function(array, index) ) {
+				empty_elements++;
+				
+				if (empty_elements >= empty_elements_threshold)
+					break;
+			}
 		}
+		
+		if (empty_elements < empty_elements_threshold)
+			return;
 	}
-	
-	if (empty_elements < empty_elements_threshold)
-		return;
 	
 	// Then overwrite empty elements with the following filled ones
 	size_t compacted_index = 0;
@@ -92,7 +95,7 @@ void array_compact_threshold(array_p array, size_t empty_elements_threshold, arr
 	array_resize(array, compacted_index);
 }
 
-ssize_t array_find(array_p array, array_elem_check_t check_function){
+ssize_t array_find(array_p array, array_elem_func_t check_function){
 	for(size_t index = 0; index < array->length; index++) {
 		if ( check_function(array, index) )
 			return index;
@@ -108,4 +111,8 @@ void array_remove(array_p array, size_t index){
 	char* elem_start_ptr = (char*)array->data + index * array->element_size;
 	memmove(elem_start_ptr, elem_start_ptr + array->element_size, (array->length - index - 1) * array->element_size);
 	array_resize(array, array->length - 1);
+}
+
+void array_remove_func(array_p array, array_elem_func_t func){
+	array_compact_threshold(array, 1, func);
 }
