@@ -64,20 +64,20 @@ void    array_remove_func(array_p array, array_elem_func_t func);
 	index;                                            \
 })
 
-#define array_remove_val(array, type, value)  ({         \
-	bool elem_func(array_p array, size_t index){         \
-		return array_elem(array, type, index) == value;  \
-	}                                                    \
-	array_remove_func(a, elem_func);                     \
+#define array_remove_val(array, type, value)  ({     \
+	bool elem_func(array_p a, size_t index){         \
+		return array_elem(a, type, index) == value;  \
+	}                                                \
+	array_remove_func(array, elem_func);             \
 })
 
 // In the expression the current element is available as the variable "x"
 #define array_remove_expr(array, type, expression)  ({    \
-	bool elem_func(array_p a, size_t index){         \
-		type x = array_elem(a, type, index);         \
-		return (expression);                             \
-	}                                                    \
-	array_remove_func(array, elem_func);                     \
+	bool elem_func(array_p a, size_t index){              \
+		type x = array_elem(a, type, index);              \
+		return (expression);                              \
+	}                                                     \
+	array_remove_func(array, elem_func);                  \
 })
 
 
