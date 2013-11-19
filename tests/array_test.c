@@ -152,6 +152,39 @@ void test_array_remove(){
 	array_destroy(a);
 }
 
+// Only test the features requireing GNU extention when we're compiling in GNU C mode
+#ifndef __STRICT_ANSI__
+
+void test_array_find_val(){
+	array_p a = array_with(4, int);
+	array_data(a, int)[0] = 7;
+	array_data(a, int)[1] = 584;
+	array_data(a, int)[2] = 19;
+	array_data(a, int)[3] = 26;
+	
+	check_int(array_find_val(a, int, 19), 2);
+	check_int(array_find_val(a, int, 26), 3);
+	check_int(array_find_val(a, int, 8), -1);
+	
+	array_destroy(a);
+}
+
+void test_array_find_expr(){
+	array_p a = array_with(4, int);
+	array_data(a, int)[0] = 7;
+	array_data(a, int)[1] = 584;
+	array_data(a, int)[2] = 19;
+	array_data(a, int)[3] = 26;
+	
+	check_int(array_find_expr(a, int, (x * 2) == 38), 2);
+	check_int(array_find_expr(a, int, (x / 2) == 13), 3);
+	check_int(array_find_expr(a, int, x == 8), -1);
+	
+	array_destroy(a);
+}
+
+#endif
+
 int main(){
 	run(test_alloc);
 	run(test_access);
@@ -161,5 +194,11 @@ int main(){
 	run(test_array_compact_threshold);
 	run(test_array_find);
 	run(test_array_remove);
+	
+#	ifndef __STRICT_ANSI__
+	run(test_array_find_val);
+	run(test_array_find_expr);
+#	endif
+	
 	return show_report();
 }

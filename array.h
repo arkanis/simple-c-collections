@@ -34,10 +34,39 @@ ssize_t array_find(array_p array, array_elem_check_t check_function);
 // Removes one element from the array
 void    array_remove(array_p array, size_t index);
 
+// This stuff requires the statement as expression GCC extention. Therefore only compile
+// it when not in strict C mode.
+#ifndef __STRICT_ANSI__
+
+#define array_find_val(array, type, value)  ({        \
+	ssize_t index = -1;                               \
+	for(size_t i = 0; i < array->length; i++) {       \
+		if ( array_elem(array, type, i) == value ) {  \
+			index = i;                                \
+			break;                                    \
+		}                                             \
+	}                                                 \
+	index;                                            \
+})
+
+// In the expression the current element is available as the variable "x"
+#define array_find_expr(array, type, expression)  ({  \
+	ssize_t index = -1;                               \
+	for(size_t i = 0; i < array->length; i++) {       \
+		type x = array_elem(array, type, i);          \
+		if (expression) {                             \
+			index = i;                                \
+			break;                                    \
+		}                                             \
+	}                                                 \
+	index;                                            \
+})
+
+#endif
+
 /*
 
 Further ideas:
-
 
 
 // searches in region of the array. length = 0 means all remaining elements after start.
@@ -51,7 +80,6 @@ size_t array_find_in(array, value, start, length)
 // same meaning of the start and length parameter as above
 array_p array_slice(array, start, length);
 array_p array_copy_slice(array, start, length);
-
 
 
 void array_remove_slice(array, start, length);
