@@ -73,11 +73,11 @@ void    array_remove_func(array_p array, array_elem_func_t func);
 
 // In the expression the current element is available as the variable "x"
 #define array_remove_expr(array, type, expression)  ({    \
-	bool elem_func(array_p array, size_t index){         \
-		type x = array_elem(array, type, index);         \
+	bool elem_func(array_p a, size_t index){         \
+		type x = array_elem(a, type, index);         \
 		return (expression);                             \
 	}                                                    \
-	array_remove_func(a, elem_func);                     \
+	array_remove_func(array, elem_func);                     \
 })
 
 
