@@ -103,4 +103,15 @@ array_p array_copy_slice(array, start, length);
 
 void array_remove_slice(array, start, length);
 
+Strange stuff / Bugs:
+
+- array.h causes bug in sys/types.h header file. GCC error:
+  
+  In file included from array.h:5:0,
+                 from register_allocator.h:5,
+                 from register_allocator.c:2:
+  /usr/include/x86_64-linux-gnu/sys/types.h:34:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘u_char’
+  
+  In that case include array.h before the rest. Not yet looked into it.
+
 */
