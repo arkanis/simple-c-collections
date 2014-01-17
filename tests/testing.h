@@ -23,6 +23,9 @@
 #define check_not_null(actual)                  check_func( (actual) != NULL, \
                                                     __FILE__, __LINE__, __func__, \
                                                     #actual " != NULL", "got NULL")
+#define check_null(actual)                      check_func( (actual) == NULL, \
+                                                    __FILE__, __LINE__, __func__, \
+                                                    #actual " == NULL", "got %p", actual)
 
 typedef void (*test_func_t)();
 
