@@ -20,7 +20,7 @@ void list_destroy(list_p list) {
 }
 
 void* list_prepend_ptr(list_p list) {
-	list_node_p node = malloc(sizeof(list_node_t) + list->element_size);
+	list_node_p node = list_new_node(list);
 	
 	node->prev = NULL;
 	node->next = list->first;
@@ -36,7 +36,7 @@ void* list_prepend_ptr(list_p list) {
 }
 
 void* list_append_ptr(list_p list) {
-	list_node_p node = malloc(sizeof(list_node_t) + list->element_size);
+	list_node_p node = list_new_node(list);
 	
 	node->prev = list->last;
 	node->next = NULL;
@@ -106,7 +106,7 @@ void* list_insert_before_ptr(list_p list, list_node_p target_node) {
 	else if (target_node == list->first)
 		return list_prepend_ptr(list);
 	
-	list_node_p new_node = malloc(sizeof(list_node_t) + list->element_size);
+	list_node_p new_node = list_new_node(list);
 	
 	new_node->prev = target_node->prev;
 	new_node->next = target_node;
@@ -124,7 +124,7 @@ void* list_insert_after_ptr(list_p list, list_node_p target_node) {
 	else if (target_node == list->last)
 		return list_append_ptr(list);
 	
-	list_node_p new_node = malloc(sizeof(list_node_t) + list->element_size);
+	list_node_p new_node = list_new_node(list);
 	
 	new_node->prev = target_node;
 	new_node->next = target_node->next;
@@ -134,4 +134,13 @@ void* list_insert_after_ptr(list_p list, list_node_p target_node) {
 	target_node->next = new_node;
 	
 	return new_node + 1;
+}
+
+list_node_p list_new_node(list_p list) {
+	list_node_p new_node = malloc(sizeof(list_node_t) + list->element_size);
+	
+	new_node->prev = NULL;
+	new_node->next = NULL;
+	
+	return new_node;
 }

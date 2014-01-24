@@ -26,14 +26,14 @@ list_remove_first(list);  // removes 8
 list_remove_last(list);   // removes 7
 
 
-// For functions that add or read nodes there are also void pointer version
-// that return the memory blocks the values should be stored in.
+// For functions that add or read nodes there are also void pointer version.
+// They return a pointer to the value of the node.
 
 list_prepend_ptr(list);  // -> void pointer to the newly prepended memory block sizeof(int) bytes large
 list_append_ptr(list);   // -> void pointer to the newly appended memory block sizeof(int) bytes large
 
-list_first_ptr(list);    // -> void pointer to the value memory block of the first node
-list_last_ptr(list);     // -> void pointer to the value memory block of the last node
+list_first_ptr(list);    // -> void pointer to the value of the first node
+list_last_ptr(list);     // -> void pointer to the value of the last node
 
 
 // Normal iteration (removing nodes during iteration will segfault!)
@@ -65,6 +65,8 @@ list_insert_before(list, node, int, 6);  // adds 6 before 7
 list_insert_after(list, node, int, 8);   // adds 8 after 7
 
 list_remove(list, node);                 // removes 7
+list_new_node(list);                     // New unwired node (type list_node_p, next and prev both NULL) with undefined
+                                         // value. You have to wire it up yourself.
 
 // Again there are void* versions for functions that add or read nodes.
 // They return the memory address of the block that stores the value.
@@ -110,6 +112,7 @@ void                 list_remove_last(      list_p list);
 #define              list_value(            node, type)                         ( *((type*)list_value_ptr(node)) )
 static inline  void* list_value_ptr(        list_node_p node)                   { return node + 1; }
 
+list_node_p          list_new_node(         list_p list);
 void                 list_remove(           list_p list, list_node_p node);
 #define              list_insert_before(    list, node, type, value)            (*((type*)list_insert_before_ptr(list, node)) = (value))
 #define              list_insert_after(     list, node, type, value)            (*((type*)list_insert_after_ptr(list, node)) = (value))
