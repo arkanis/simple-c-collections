@@ -153,7 +153,9 @@ size_t show_report(){
 	for(report_item_p item = report_items; item != NULL; item = item->next)
 		fprintf(stderr, "%s\n", item->msg);
 	
+	fprintf(stderr, "\x1b[%sm", (tests_failed > 0) ? "31" : "32");
 	fprintf(stderr, "%zu tests failed, %zu tests passed, %zu checks passed\n", tests_failed, tests_passed, checks_passed);
+	fprintf(stderr, "\x1b[0m");
 	return tests_failed;
 }
 
