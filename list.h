@@ -102,6 +102,7 @@ void                 list_destroy(          list_p list);
 void*                list_prepend_ptr(      list_p list);
 void*                list_append_ptr(       list_p list);
 
+size_t               list_count(            list_p list);
 void                 list_clear(            list_p list);
 void                 list_remove_first(     list_p list);
 void                 list_remove_last(      list_p list);

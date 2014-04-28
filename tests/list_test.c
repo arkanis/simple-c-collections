@@ -289,6 +289,28 @@ void test_list_insert_after() {
 	list_destroy(list);
 }
 
+void test_list_count() {
+	list_p list = list_of(int);
+	
+	list_append(list, int, 0);
+	list_append(list, int, 8);
+	list_append(list, int, 15);
+	
+	check_int( list_count(list), 3 );
+	
+	list_append(list, int, 7);
+	list_append(list, int, 21);
+	
+	check_int( list_count(list), 5 );
+	
+	list_remove_first(list);
+	list_remove_last(list);
+	
+	check_int( list_count(list), 3 );
+	
+	list_destroy(list);
+}
+
 
 int main(){
 	run(test_prepend_and_clear);
@@ -301,6 +323,7 @@ int main(){
 	run(test_list_remove_during_iteration);
 	run(test_list_insert_before);
 	run(test_list_insert_after);
+	run(test_list_count);
 	
 	return show_report();
 }

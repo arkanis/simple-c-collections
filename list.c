@@ -144,3 +144,12 @@ list_node_p list_new_node(list_p list) {
 	
 	return new_node;
 }
+
+size_t list_count(list_p list) {
+	size_t count = 0;
+	
+	for(list_node_p n = list->first; n != NULL; n = n->next)
+		count++;
+	
+	return count;
+}
