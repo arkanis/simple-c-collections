@@ -194,6 +194,10 @@ static ssize_t unified_hash_search(unified_hash_p hashmap, hash_key_t int_key, c
 		
 		index = (index + probe_offset * probe_offset) % hashmap->capacity;
 		probe_offset++;
+		
+		// We probed for a long time but didn't find anything.
+		if (probe_offset > hashmap->capacity)
+			return -(first_deleted_index + 1);
 	}
 }
 

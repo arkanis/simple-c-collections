@@ -292,6 +292,20 @@ void test_dict_resize(){
 	dict_destroy(d);
 }
 
+void test_hash_get_ptr_bug0(){
+	hash_p element_infos = hash_of(int);
+	hash_put(element_infos, 0x1A45DFA3, int, 7);
+	hash_put(element_infos, 0x18538067, int, 7);
+	hash_put(element_infos, 0x1549A966, int, 7);
+	
+	int* p;
+	p = hash_get_ptr(element_infos, 0x1F43B675);
+	check_not_null(p);
+	
+	hash_destroy(element_infos);
+}
+
+
 int main(){
 	run(test_alloc);
 	run(test_put_and_get_new_elem);
@@ -306,5 +320,7 @@ int main(){
 	run(test_snap_to_prime);
 	run(test_dict);
 	run(test_dict_resize);
+	run(test_hash_get_ptr_bug0);
+	
 	return show_report();
 }
