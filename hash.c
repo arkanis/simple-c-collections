@@ -168,7 +168,7 @@ static void unified_hash_destroy(unified_hash_p hash){
 static ssize_t unified_hash_search(unified_hash_p hashmap, hash_key_t int_key, const char* string_key, unified_hash_hash_t hash){
 	unified_hash_hash_t hash_at_index;
 	size_t index = hash % hashmap->capacity;
-	size_t probe_offset = 1;
+	size_t probe_offset = 0;
 	ssize_t first_deleted_index = -1;
 	
 	while(true) {
@@ -192,12 +192,15 @@ static ssize_t unified_hash_search(unified_hash_p hashmap, hash_key_t int_key, c
 			}
 		}
 		
-		index = (index + probe_offset * probe_offset) % hashmap->capacity;
+		index = (index + 1) % hashmap->capacity;
 		probe_offset++;
 		
-		// We probed for a long time but didn't find anything.
-		if (probe_offset > hashmap->capacity)
-			return -(first_deleted_index + 1);
+		// We probed for a long time but didn't find anything. But there should be free slots
+		// in the hashmap so something is broken. Return a value that will crash for sure.
+		if (probe_offset > hashmap->capacity) {
+			//printf("aborted probing: %zd, returning %zd\n", first_deleted_index, -(first_deleted_index + 1));
+			return (ssize_t)((SIZE_MAX / 2) + 1);
+		}
 	}
 }
 

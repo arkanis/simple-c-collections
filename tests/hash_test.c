@@ -299,7 +299,24 @@ void test_hash_get_ptr_bug0(){
 	hash_put(element_infos, 0x1549A966, int, 7);
 	
 	int* p;
+	
 	p = hash_get_ptr(element_infos, 0x1F43B675);
+	check_null(p);
+	
+	p = hash_get_ptr(element_infos, 0x1F43B674);
+	check_null(p);
+	p = hash_get_ptr(element_infos, 0x1F43B676);
+	check_null(p);
+	p = hash_get_ptr(element_infos, 0x0);
+	check_null(p);
+	p = hash_get_ptr(element_infos, 0xFFFFFFFF);
+	check_null(p);
+	
+	p = hash_get_ptr(element_infos, 0x1A45DFA3);
+	check_not_null(p);
+	p = hash_get_ptr(element_infos, 0x18538067);
+	check_not_null(p);
+	p = hash_get_ptr(element_infos, 0x1549A966);
 	check_not_null(p);
 	
 	hash_destroy(element_infos);
