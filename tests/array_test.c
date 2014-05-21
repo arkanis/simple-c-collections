@@ -171,6 +171,50 @@ void test_array_remove_func(){
 	array_destroy(a);
 }
 
+typedef struct {
+	int a, b, c;
+} stuff_t, *stuff_p;
+
+void test_array_append_ptr(){
+	array_p a = array_of(stuff_t);
+	
+	stuff_p stuff = array_append_ptr(a);
+	stuff->a = 1;
+	stuff->b = 2;
+	stuff->c = 3;
+	
+	check_int(a->length, 1);
+	
+	stuff = array_append_ptr(a);
+	*stuff = (stuff_t){ 4, 5, 6 };
+	
+	check_int(a->length, 2);
+	
+	check_int( array_elem(a, stuff_t, 0).a, 1);
+	check_int( array_elem(a, stuff_t, 0).b, 2);
+	check_int( array_elem(a, stuff_t, 0).c, 3);
+	check_int( array_elem(a, stuff_t, 1).a, 4);
+	check_int( array_elem(a, stuff_t, 1).b, 5);
+	check_int( array_elem(a, stuff_t, 1).c, 6);
+	
+	array_destroy(a);
+}
+
+void test_array_elem_ptr(){
+	array_p a = array_of(int);
+	array_append(a, int, 8);
+	array_append(a, int, 17);
+	check_int(a->length, 2);
+	
+	int* p = NULL;
+	p = array_elem_ptr(a, 0);
+	check( *p == 8 );
+	p = array_elem_ptr(a, 1);
+	check( *p == 17 );
+	
+	array_destroy(a);
+}
+
 // Only test the features requireing GNU extention when we're compiling in GNU C mode
 #ifndef __STRICT_ANSI__
 
@@ -256,6 +300,8 @@ int main(){
 	run(test_array_find);
 	run(test_array_remove);
 	run(test_array_remove_func);
+	run(test_array_append_ptr);
+	run(test_array_elem_ptr);
 	
 #	ifndef __STRICT_ANSI__
 	run(test_array_find_val);

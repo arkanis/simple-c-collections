@@ -23,6 +23,9 @@ array_p array_new(size_t length, size_t element_size);
 void    array_destroy(array_p array);
 void*   array_resize(array_p array, size_t new_length);
 
+void*   array_elem_ptr(array_p array, size_t index);
+void*   array_append_ptr(array_p array);
+
 typedef bool (*array_elem_func_t)(array_p array, size_t index);
 
 // Removes empty elements from an array if more than `empty_elements_threshold` are empty.

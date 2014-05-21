@@ -62,6 +62,14 @@ void* array_resize(array_p array, size_t new_length){
 	return (old_length < new_length) ? (char*)array->data + (old_length * array->element_size) : NULL;
 }
 
+void* array_append_ptr(array_p array) {
+	return array_resize(array, array->length + 1);
+}
+
+void* array_elem_ptr(array_p array, size_t index) {
+	return (char*)array->data + array->element_size * index;
+}
+
 void array_compact_threshold(array_p array, size_t empty_elements_threshold, array_elem_func_t is_empty_function){
 	// First check if enough elements are empty. If the threshold is 0 or 1 we don't need this because
 	// we have to compact each found element anyway.
