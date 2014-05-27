@@ -322,24 +322,30 @@ void test_simple_preorder_iteration() {
 		tree_p n13 = tree_append(n1, int, 13);
 			tree_p n131 = tree_append(n13, int, 131);
 			tree_p n132 = tree_append(n13, int, 132);
-		tree_p n14 = tree_append(n1, int, 14);
-	tree_append(tree, int, 2);
+	tree_p n2 = tree_append(tree, int, 2);
 	
 	// Iterate a subtree. Checks that we don't break out of it.
 	tree_p n = tree_first_pre(n1);	check(n == n13);
 	n = tree_next_pre(n1, n);		check(n == n131);
 	n = tree_next_pre(n1, n);		check(n == n132);
-	n = tree_next_pre(n1, n);		check(n == n14);
 	n = tree_next_pre(n1, n);		check(n == NULL);
 	// Check NULL handling
 	n = tree_next_pre(n1, n);		check(n == NULL);
+	
+	// Try to iterate over the entire tree
+	n = tree_first_pre(tree);		check(n == n1);
+	n = tree_next_pre(tree, n);		check(n == n13);
+	n = tree_next_pre(tree, n);		check(n == n131);
+	n = tree_next_pre(tree, n);		check(n == n132);
+	n = tree_next_pre(tree, n);		check(n == n2);
+	n = tree_next_pre(tree, n);		check(n == NULL);
 	
 	// Just a final check in the meant to be used way
 	int counter = 0;
 	for(tree_p n = tree_first_pre(n1); n != NULL; n = tree_next_pre(n1, n)) {
 		counter++;
 	}
-	check_int(counter, 4);
+	check_int(counter, 3);
 	
 	tree_destroy(tree);
 }

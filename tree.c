@@ -163,14 +163,22 @@ tree_p tree_next_pre(tree_p tree, tree_p node) {
 	if (!node)
 		return NULL;
 	
-	if (node->first_child)
+	if (node->first_child) {
 		return node->first_child;
-	else if (node->next)
+	} else if (node->next) {
 		return node->next;
-	else if (node->parent == tree)
+	} else {
+		// Go up until we're at the end of our subtree or find a next node
+		tree_p n = node->parent;
+		while(n != NULL) {
+			if (n == tree)
+				return NULL;
+			if (n->next)
+				return n->next;
+			n = n->parent;
+		}
 		return NULL;
-	else
-		return node->parent->next;
+	}
 }
 
 tree_p tree_skip_children_pre(tree_p tree, tree_p node) {
